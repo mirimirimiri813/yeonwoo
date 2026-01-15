@@ -4,7 +4,7 @@ import { ProfileSection } from './components/ProfileSection';
 import { FamilySection } from './components/FamilySection';
 import { TimeCapsuleSection } from './components/TimeCapsuleSection';
 import { VillageSection } from './components/VillageSection';
-import { Home, Users, Box, Map as MapIcon, Music, BatteryMedium, Wifi, AlertCircle, PlayCircle, PauseCircle, ChevronRight, X, ZoomIn, Heart } from 'lucide-react';
+import { Home, Users, Box, Map as MapIcon, Music, BatteryMedium, Wifi, AlertCircle, PlayCircle, PauseCircle, ChevronRight, X, ZoomIn } from 'lucide-react';
 import { IlchonMessage } from './types';
 import { YEONWOO_PROFILE } from './constants';
 
@@ -72,7 +72,7 @@ const App: React.FC = () => {
             "아~ 오늘따라 심심하네. 머하고 사노?",
             "과수원 일 돕기 진짜 싫다... 니가 와서 좀 도와주면 안 되나?",
             "니 오늘 왜 연락 안 했노? 내 기다린 거 아이거든?",
-            "세상에 맛있는 게 우예 이리 많노... 복숭아 말고 치킨 묵고 싶다.",
+            "세상에 맛있는 게 와 이리 많노... 복숭아 말고 치킨 묵고 싶다.",
             "니 내 미니홈피 브금 좋지? 뻑간다 아이가."
           ];
           reply = genericReplies[Math.floor(Math.random() * genericReplies.length)];
@@ -92,124 +92,101 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="h-full w-full bg-[#85a5ff] flex items-center justify-center p-0 sm:p-4 md:p-6 overflow-hidden safe-area-inset">
-      <div className="w-full max-w-5xl bg-[#e0e0e0] border-2 border-white border-b-gray-600 border-r-gray-600 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.3)] flex flex-col h-full sm:h-auto sm:max-h-[850px] overflow-hidden">
+    <div className="h-full w-full bg-[#85a5ff] flex items-center justify-center p-0 sm:p-4 overflow-hidden">
+      <div className="w-full max-w-5xl bg-[#e0e0e0] border-2 border-white border-b-gray-600 border-r-gray-600 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)] flex flex-col h-full sm:max-h-[850px] overflow-hidden">
         
-        {/* Title Bar */}
-        <div className="bg-gradient-to-r from-blue-800 to-blue-600 px-2 py-1 flex justify-between items-center shrink-0 h-8 sm:h-10">
+        <div className="bg-gradient-to-r from-blue-800 to-blue-600 px-2 py-1 flex justify-between items-center shrink-0">
           <div className="flex items-center gap-2 text-white font-bold text-[10px] sm:text-xs truncate">
-            <img src={YEONWOO_PROFILE.sidebarImageUrl} alt="icon" className="w-4 h-4 sm:w-5 sm:h-5 border border-white" />
-            <span className="truncate">Yeonwoo's Minihompy - Internet Explorer</span>
+            <img src="https://picsum.photos/20/20" alt="icon" className="w-3 h-3 sm:w-4 sm:h-4 border border-white" />
+            <span className="truncate">Yeonwoo's Retro Home - Internet Explorer</span>
           </div>
           <div className="flex gap-1 shrink-0">
-             <div className="w-4 h-4 sm:w-5 sm:h-5 bg-[#c0c0c0] border border-white border-b-black border-r-black text-[8px] sm:text-[10px] flex items-center justify-center font-bold">_</div>
-             <div className="w-4 h-4 sm:w-5 sm:h-5 bg-[#c0c0c0] border border-white border-b-black border-r-black text-[8px] sm:text-[10px] flex items-center justify-center font-bold">X</div>
+             <div className="w-4 h-4 bg-[#c0c0c0] border border-white border-b-black border-r-black text-[8px] flex items-center justify-center font-bold">_</div>
+             <div className="w-4 h-4 bg-[#c0c0c0] border border-white border-b-black border-r-black text-[8px] flex items-center justify-center font-bold">X</div>
           </div>
         </div>
 
-        {/* Main Body */}
-        <div className="flex-1 bg-[#b0c4de] p-1.5 sm:p-3 overflow-hidden flex flex-col lg:flex-row gap-2 sm:gap-4">
-            
-            {/* Sidebar (Name/Age Always Visible) */}
-            <div className="w-full lg:w-56 bg-white border border-gray-400 rounded-lg p-2.5 flex flex-row lg:flex-col gap-3 shrink-0 overflow-hidden shadow-inner">
+        <div className="flex-1 bg-[#b0c4de] p-1 sm:p-3 overflow-hidden flex flex-col sm:flex-row gap-2 sm:gap-3">
+            <div className="w-full sm:w-48 md:w-56 bg-white border border-gray-400 rounded-lg p-2 flex flex-row sm:flex-col gap-2 shrink-0 overflow-hidden sm:shadow-inner">
                 <div 
-                  className="w-20 sm:w-24 lg:w-full shrink-0 border-2 border-gray-100 cursor-zoom-in group relative overflow-hidden aspect-square"
+                  className="w-16 sm:w-full shrink-0 border border-gray-200 cursor-zoom-in group relative overflow-hidden"
                   onClick={() => setSidebarImageExpanded(true)}
                 >
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center z-10">
                         <ZoomIn size={20} className="text-white opacity-0 group-hover:opacity-100" />
                     </div>
-                    <img src={YEONWOO_PROFILE.sidebarImageUrl} className="w-full h-full object-cover" alt="Profile" />
+                    <img src={YEONWOO_PROFILE.sidebarImageUrl} className="w-full aspect-square object-cover" alt="Profile" />
                 </div>
                 
-                <div className="flex-1 flex flex-col justify-center lg:text-center text-[11px] sm:text-sm min-w-0">
-                    <p className="font-bold text-blue-900 text-sm sm:text-base lg:text-lg mb-0.5 sm:mb-1 truncate">
-                      {YEONWOO_PROFILE.name} ({YEONWOO_PROFILE.age.current})
-                    </p>
-                    <p className="text-gray-500 font-bold mb-1 sm:mb-2">{YEONWOO_PROFILE.mbti}</p>
-                    <div className="text-orange-500 font-black text-[10px] sm:text-xs flex items-center gap-1 lg:justify-center">
-                      <Heart size={10} fill="currentColor" /> TODAY: 1,024
-                    </div>
+                <div className="flex-1 flex flex-col justify-center sm:text-center text-[10px] sm:text-xs min-w-0">
+                    <p className="font-bold truncate text-blue-900">도연우 (25)</p>
+                    <p className="text-gray-500 hidden sm:block">♂ ESFP / 3w2</p>
+                    <div className="text-orange-500 mt-0.5 sm:mt-1 font-bold">❤️ Today: 1024</div>
 
-                    {/* BGM Widget - Desktop & Large Mobile only */}
-                    <div className="hidden sm:block mt-2 lg:mt-3 bg-[#f0f0f0] p-1.5 border-2 border-white border-b-gray-400 border-r-gray-400 rounded overflow-hidden">
-                        <div className="flex items-center justify-between font-bold text-[9px] lg:text-[10px] mb-1 px-1">
+                    <div className="mt-1 sm:mt-2 bg-[#f0f0f0] p-1 border-2 border-white border-b-gray-400 border-r-gray-400 rounded overflow-hidden">
+                        <div className="flex items-center justify-between font-bold text-[8px] sm:text-[9px] mb-1 px-1">
                             <span className="text-blue-700">CYWORLD BGM</span>
+                            {audioError && <AlertCircle size={8} className="text-red-500" />}
                         </div>
-                        <div className="bg-white border border-gray-300 px-1 py-1 overflow-hidden whitespace-nowrap mb-1">
-                            <div className={`flex items-center gap-1 text-orange-600 font-bold text-[10px] ${bgmPlaying ? 'animate-marquee' : ''}`}>
-                               <Music size={10} /> 
-                               <span>{audioError ? '♬ 재생 불가' : (bgmPlaying ? '♬ Buzz - 가시' : '♬ 일촌 대환영!')}</span>
+                        <div className="bg-white border border-gray-300 px-1 py-0.5 overflow-hidden whitespace-nowrap mb-1">
+                            <div className={`flex items-center gap-1 text-orange-600 font-bold ${bgmPlaying ? 'animate-marquee' : ''}`}>
+                               <Music size={8} /> 
+                               <span>{audioError ? '♬ 재생 불가' : (bgmPlaying ? '♬ Buzz - 가시 (도연우\'s Pick)' : '♬ 일촌 대환영!')}</span>
                             </div>
                         </div>
                         <button 
                             onClick={() => { setBgmPlaying(!bgmPlaying); setAudioError(false); }} 
-                            className="w-full text-[10px] border border-gray-400 bg-[#e0e0e0] py-1 flex items-center justify-center gap-1 active:bg-gray-300 shadow-sm font-bold"
+                            className="w-full text-[8px] sm:text-[9px] border border-gray-400 bg-[#e0e0e0] py-0.5 flex items-center justify-center gap-1 active:bg-gray-300 shadow-sm"
                         >
-                            {bgmPlaying ? <PauseCircle size={12}/> : <PlayCircle size={12}/>} {bgmPlaying ? 'STOP' : 'PLAY'}
+                            {bgmPlaying ? <><PauseCircle size={10}/> Stop</> : <><PlayCircle size={10}/> Play</>}
                         </button>
                         <audio ref={audioRef} loop src="https://raw.githubusercontent.com/mirimirimiri2/1/main/buzz.mp3" onError={() => setAudioError(true)} />
                     </div>
                 </div>
             </div>
 
-            {/* Content Area */}
-            <div className="flex-1 min-w-0 h-full relative flex flex-col overflow-hidden">
-                {/* Mobile Tabs (Visible on screens smaller than LG) */}
-                <div className="lg:hidden flex bg-white/70 backdrop-blur-sm p-1 rounded-t-lg border-x border-t border-gray-400 gap-1 overflow-x-auto no-scrollbar shrink-0 z-10">
-                    <MobileNavItem active={activeTab === Tab.PROFILE} onClick={() => setActiveTab(Tab.PROFILE)} label="홈" icon={<Home size={14} />} />
-                    <MobileNavItem active={activeTab === Tab.FAMILY} onClick={() => setActiveTab(Tab.FAMILY)} label="인맥" icon={<Users size={14} />} />
-                    <MobileNavItem active={activeTab === Tab.VILLAGE} onClick={() => setActiveTab(Tab.VILLAGE)} label="마을" icon={<MapIcon size={14} />} />
-                    <MobileNavItem active={activeTab === Tab.CAPSULE} onClick={() => setActiveTab(Tab.CAPSULE)} label="보물" icon={<Box size={14} />} />
+            <div className="flex-1 min-w-0 h-full relative flex flex-col">
+                <div className="lg:hidden flex bg-white/50 backdrop-blur-sm p-1 rounded-t-lg border-x border-t border-gray-400 gap-1 overflow-x-auto no-scrollbar shrink-0">
+                    <MobileNavItem active={activeTab === Tab.PROFILE} onClick={() => setActiveTab(Tab.PROFILE)} label="홈" icon={<Home size={12} />} />
+                    <MobileNavItem active={activeTab === Tab.FAMILY} onClick={() => setActiveTab(Tab.FAMILY)} label="인맥" icon={<Users size={12} />} />
+                    <MobileNavItem active={activeTab === Tab.VILLAGE} onClick={() => setActiveTab(Tab.VILLAGE)} label="마을" icon={<MapIcon size={12} />} />
+                    <MobileNavItem active={activeTab === Tab.CAPSULE} onClick={() => setActiveTab(Tab.CAPSULE)} label="보물" icon={<Box size={12} />} />
                 </div>
 
-                {/* Content Container */}
                 <div className="bg-white border border-gray-400 lg:rounded-lg shadow-inner flex-1 flex flex-col overflow-hidden relative">
-                     <div className="flex-1 overflow-y-auto p-3 sm:p-6 custom-scrollbar bg-white">
-                        <div className="mb-4 pb-2 border-b-2 border-dotted border-gray-200 flex justify-between items-end">
-                            <h1 className="text-base sm:text-xl lg:text-2xl font-black text-pink-500 truncate flex items-center gap-1">
-                                <ChevronRight size={18} className="text-gray-300" />
+                     <div className="flex-1 overflow-y-auto p-3 sm:p-5 custom-scrollbar bg-white">
+                        <div className="mb-3 pb-2 border-b border-dotted border-gray-300 flex justify-between items-end">
+                            <h1 className="text-sm sm:text-xl font-bold text-pink-500 truncate flex items-center gap-1">
+                                <ChevronRight size={16} className="text-gray-400" />
                                 {activeTab === Tab.PROFILE && "연우의 미니홈피"}
                                 {activeTab === Tab.FAMILY && "우리는 일촌관계"}
                                 {activeTab === Tab.VILLAGE && "추억의 도화마을"}
                                 {activeTab === Tab.CAPSULE && "시간이 멈춘 상자"}
                             </h1>
                         </div>
-                        <div className="pb-8">
+                        <div className="pb-4">
                           {renderContent()}
                         </div>
                      </div>
-
-                     {/* Desktop Tabs (Only visible on LG screens and above) */}
-                     <div className="absolute top-4 -right-[32px] flex flex-col gap-1.5 z-0 hidden lg:flex">
-                        <TabButton active={activeTab === Tab.PROFILE} onClick={() => setActiveTab(Tab.PROFILE)} label="홈" color="bg-pink-400" icon={<Home size={16} />} />
-                        <TabButton active={activeTab === Tab.FAMILY} onClick={() => setActiveTab(Tab.FAMILY)} label="인맥" color="bg-blue-400" icon={<Users size={16} />} />
-                        <TabButton active={activeTab === Tab.VILLAGE} onClick={() => setActiveTab(Tab.VILLAGE)} label="마을" color="bg-green-400" icon={<MapIcon size={16} />} />
-                        <TabButton active={activeTab === Tab.CAPSULE} onClick={() => setActiveTab(Tab.CAPSULE)} label="보물" color="bg-yellow-400" icon={<Box size={16} />} />
+                     <div className="absolute top-4 -right-[28px] flex flex-col gap-1 z-0 hidden lg:flex">
+                        <TabButton active={activeTab === Tab.PROFILE} onClick={() => setActiveTab(Tab.PROFILE)} label="홈" color="bg-pink-400" icon={<Home size={14} />} />
+                        <TabButton active={activeTab === Tab.FAMILY} onClick={() => setActiveTab(Tab.FAMILY)} label="인맥" color="bg-blue-400" icon={<Users size={14} />} />
+                        <TabButton active={activeTab === Tab.VILLAGE} onClick={() => setActiveTab(Tab.VILLAGE)} label="마을" color="bg-green-400" icon={<MapIcon size={14} />} />
+                        <TabButton active={activeTab === Tab.CAPSULE} onClick={() => setActiveTab(Tab.CAPSULE)} label="보물" color="bg-yellow-400" icon={<Box size={14} />} />
                      </div>
                 </div>
             </div>
         </div>
 
-        {/* Taskbar */}
-        <div className="bg-[#ece9d8] border-t border-gray-400 px-3 py-1 flex justify-between items-center text-[10px] sm:text-xs text-gray-700 select-none shrink-0 h-8 sm:h-10">
-            <div className="flex items-center gap-3">
-                <button className="flex items-center gap-1.5 bg-gradient-to-b from-green-500 to-green-700 text-white px-2 py-0.5 rounded-r shadow-sm font-bold border border-green-800">
-                  <img src="https://picsum.photos/12/12" alt="" className="w-3 h-3 rounded-full" /> Start
-                </button>
-                <div className="hidden md:flex gap-1">
-                  <div className="px-3 py-0.5 bg-white border border-gray-300 shadow-inner rounded flex items-center gap-2">
-                    <img src={YEONWOO_PROFILE.sidebarImageUrl} className="w-3 h-3" />
-                    <span className="font-bold text-[10px] text-blue-800">도연우's Minihompy</span>
-                  </div>
-                </div>
+        <div className="bg-[#ece9d8] border-t border-gray-400 px-2 py-0.5 flex justify-between items-center text-[9px] text-gray-600 select-none shrink-0">
+            <div className="flex gap-4">
+                <span className="flex items-center gap-1"><img src="https://picsum.photos/10/10?start" alt="" className="w-2.5 h-2.5" /> Start</span>
             </div>
-            <div className="flex gap-4 items-center bg-[#107ce0] text-white px-3 py-1 rounded-l-md h-full">
-                <div className="flex gap-2 items-center">
-                    <Wifi size={12} />
-                    <BatteryMedium size={12} />
-                </div>
-                <span className="font-bold font-mono tracking-tight">{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+            <div className="flex gap-2 items-center">
+                <Wifi size={10} />
+                <BatteryMedium size={10} />
+                <span className="hidden sm:inline">100%</span>
+                <span className="font-mono">{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
             </div>
         </div>
       </div>
@@ -218,13 +195,13 @@ const App: React.FC = () => {
       {sidebarImageExpanded && createPortal(
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fade-in" onClick={() => setSidebarImageExpanded(false)}>
             <div className="bg-[#e0e0e0] border-2 border-white border-b-gray-600 border-r-gray-600 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.5)] max-w-lg w-full overflow-hidden" onClick={e => e.stopPropagation()}>
-                <div className="bg-gradient-to-r from-blue-800 to-blue-600 px-2 py-1 flex justify-between items-center h-8 sm:h-10">
-                    <span className="text-white font-bold text-xs">Profile View - Full Size</span>
-                    <button onClick={() => setSidebarImageExpanded(false)} className="w-6 h-6 bg-[#c0c0c0] border border-white border-b-black border-r-black flex items-center justify-center text-xs font-bold active:bg-gray-400">X</button>
+                <div className="bg-gradient-to-r from-blue-800 to-blue-600 px-2 py-1 flex justify-between items-center">
+                    <span className="text-white font-bold text-xs">Profile View - Sidebar</span>
+                    <button onClick={() => setSidebarImageExpanded(false)} className="w-5 h-5 bg-[#c0c0c0] border border-white border-b-black border-r-black flex items-center justify-center text-[10px] font-bold">X</button>
                 </div>
                 <div className="p-4 bg-white m-1 border border-gray-400 flex flex-col items-center">
                     <img src={YEONWOO_PROFILE.sidebarImageUrl} className="max-w-full max-h-[70vh] object-contain border-2 border-gray-100" alt="Expanded Profile" />
-                    <button onClick={() => setSidebarImageExpanded(false)} className="mt-4 px-12 py-2 bg-[#c0c0c0] border border-white border-b-black border-r-black font-bold text-sm sm:text-base active:shadow-inner active:bg-gray-200">확인 (OK)</button>
+                    <button onClick={() => setSidebarImageExpanded(false)} className="mt-4 px-10 py-2 bg-[#c0c0c0] border border-white border-b-black border-r-black font-bold text-sm">확인 (OK)</button>
                 </div>
             </div>
         </div>,
@@ -235,16 +212,16 @@ const App: React.FC = () => {
 };
 
 const TabButton = ({ active, onClick, label, color, icon }: any) => (
-    <button onClick={onClick} className={`w-[32px] py-4 rounded-r-lg border border-gray-400 flex flex-col items-center justify-center gap-1.5 text-xs text-white font-bold transition-all ${active ? `${color} translate-x-0 shadow-md` : 'bg-gray-400 -translate-x-1.5 hover:bg-gray-500'}`}>
+    <button onClick={onClick} className={`w-[28px] py-3 rounded-r-md border border-gray-400 flex flex-col items-center justify-center gap-1 text-[10px] text-white font-bold transition-all ${active ? `${color} translate-x-0` : 'bg-gray-400 -translate-x-1 hover:bg-gray-500'}`}>
         {icon}
-        <span style={{writingMode: 'vertical-rl'}} className="mt-1">{label}</span>
+        <span style={{writingMode: 'vertical-rl'}}>{label}</span>
     </button>
 );
 
 const MobileNavItem = ({ active, onClick, label, icon }: any) => (
-    <button onClick={onClick} className={`flex-1 flex flex-col items-center justify-center gap-1 py-1.5 px-3 rounded-t-md transition-all border-b-2 min-w-[64px] ${active ? 'bg-white text-blue-700 border-blue-700 font-bold' : 'text-gray-500 border-transparent hover:bg-white/50'}`}>
+    <button onClick={onClick} className={`flex-1 flex flex-col items-center justify-center gap-0.5 py-1 px-2 rounded-t transition-all border-b-2 ${active ? 'bg-white text-blue-700 border-blue-700 font-bold' : 'text-gray-500 border-transparent hover:bg-gray-200'}`}>
         {icon}
-        <span className="text-[10px] sm:text-xs font-bold whitespace-nowrap">{label}</span>
+        <span className="text-[8px] font-bold">{label}</span>
     </button>
 );
 
