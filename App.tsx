@@ -1,266 +1,227 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { ProfileSection } from './components/ProfileSection';
 import { FamilySection } from './components/FamilySection';
 import { TimeCapsuleSection } from './components/TimeCapsuleSection';
-import { Home, Users, Box, Music, BatteryMedium, Wifi } from 'lucide-react';
+import { VillageSection } from './components/VillageSection';
+import { Home, Users, Box, Map as MapIcon, Music, BatteryMedium, Wifi, AlertCircle, PlayCircle, PauseCircle, ChevronRight, X, ZoomIn } from 'lucide-react';
 import { IlchonMessage } from './types';
+import { YEONWOO_PROFILE } from './constants';
 
 enum Tab {
-  HOME = 'HOME',
   PROFILE = 'PROFILE',
   FAMILY = 'FAMILY',
+  VILLAGE = 'VILLAGE',
   CAPSULE = 'CAPSULE'
 }
 
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<Tab>(Tab.PROFILE);
   const [bgmPlaying, setBgmPlaying] = useState(false);
+  const [audioError, setAudioError] = useState(false);
+  const [sidebarImageExpanded, setSidebarImageExpanded] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
   
-  // Interactive State
-  const [proteinCount, setProteinCount] = useState(0);
   const [ilchonMessages, setIlchonMessages] = useState<IlchonMessage[]>([]);
 
   useEffect(() => {
     if (audioRef.current) {
-        if (bgmPlaying) {
-            const playPromise = audioRef.current.play();
-            if (playPromise !== undefined) {
-                playPromise.catch(e => {
-                    console.log("Playback failed (likely autoplay policy or network):", e);
-                    setBgmPlaying(false);
-                });
-            }
-        } else {
-            audioRef.current.pause();
+      if (bgmPlaying) {
+        const playPromise = audioRef.current.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(e => {
+            console.warn("Autoplay blocked or link issue:", e);
+            setBgmPlaying(false);
+          });
         }
+      } else {
+        audioRef.current.pause();
+      }
     }
   }, [bgmPlaying]);
 
-  const handleGiftProtein = () => {
-    setProteinCount(prev => prev + 1);
-    // Visual feedback is now handled in ProfileSection via speech bubble
-  };
-
   const handleWriteIlchon = (msg: string) => {
-    if (!msg || !msg.trim()) return;
-
-    // 1. Add User Message
-    const userMsg: IlchonMessage = {
-        id: Date.now(),
-        author: 'User', // In a real app, this would be the logged-in user's name
-        content: msg,
-        isOwner: false
-    };
+    if (!msg.trim()) return;
+    const userMsg: IlchonMessage = { id: Date.now(), author: '나(User)', content: msg, isOwner: false };
     setIlchonMessages(prev => [userMsg, ...prev]);
 
-    // 2. Yeonwoo Auto-reply logic (Delayed)
     setTimeout(() => {
-        const replies = [
-            "마! 니 내 짝꿍 맞네. 말 이쁘게 하노.",
-            "시끄럽다. 내 생각 할 시간에 운동이나 해라.",
-            "오냐, 니도 오늘 하루 힘내라. 내(오빠)가 응원한다.",
-            "ㅋㅋㅋㅋ 니 쫌 귀엽네? (농담이다 착각마라)",
-            "내 키 188 될 거니까 쫌만 기다리라. 그때 니 호강시켜준다.",
-            "야! 남사시럽게 이런 거는 와 쓰는데! (입꼬리 올라감)",
-            "하... 내 인기 피곤하다 피곤해.",
-            "밥은 묵고 댕기나? 굶지 마라 확 마."
-        ];
-        const randomReply = replies[Math.floor(Math.random() * replies.length)];
-        
-        const replyMsg: IlchonMessage = {
-            id: Date.now() + 1,
-            author: '도연우',
-            content: randomReply,
-            isOwner: true
-        };
-        
-        setIlchonMessages(prev => [replyMsg, ...prev]);
-    }, 1000); // 1 second delay
+        let reply = "";
+        if (msg.includes("귀엽다") || msg.includes("귀여워")) {
+          reply = "마! 내가 어딜 봐서 귀엽노? 상남자라고 불러라! 확 마!";
+        } else if (msg.includes("멋있다") || msg.includes("멋져") || msg.includes("잘생겼다")) {
+          reply = "흥, 이제 알았나? 역시 내 맘 알아주는 건 니밖에 없다. (코 쓱)";
+        } else if (msg.includes("키") || msg.includes("난쟁이") || msg.includes("작다")) {
+          reply = "야! 내 아직 성장판 안 닫혔거든? 우유 맨날 묵고 있다. 조용히 해라.";
+        } else if (msg.includes("상남자")) {
+          reply = "오.. 니 좀 볼 줄 아네? 맞아, 내가 이 마을 최고의 상남자 도연우 아이겠나.";
+        } else if (msg.includes("태성")) {
+          reply = "강태성 그 자슥 얘기는 왜 꺼내는데? 기분 확 잡치네. 걔랑 놀지 마라!";
+        } else if (msg.includes("운동") || msg.includes("근육") || msg.includes("단백질")) {
+          reply = "오늘도 쇠질 빡세게 했다. 조만간 내 팔뚝 터질라 카니까 기대해라.";
+        } else if (msg.includes("복숭아") || msg.includes("과수원") || msg.includes("사과")) {
+          reply = "우리 집 복숭아가 젤 맛있는 건 우째 알고? 담에 마을 오면 내(오빠)가 하나 줄게.";
+        } else if (msg.includes("사랑해") || msg.includes("좋아해")) {
+          reply = "마, 갑자기 머라카노... (얼굴 빨개짐) 나중에 과수원 뒤에서 얘기하자.";
+        } else {
+          const genericReplies = [
+            "마! 니 내 짝꿍 맞네. 자주 좀 들러라.",
+            "운동이나 해라. 건강이 최고다.",
+            "밥은 묵고 댕기나? 시골 오면 내가 맛있는 거 사줄게.",
+            "내(오빠)가 항상 응원하는 거 알제? 기죽지 마라.",
+            "아~ 오늘따라 심심하네. 머하고 사노?",
+            "과수원 일 돕기 진짜 싫다... 니가 와서 좀 도와주면 안 되나?",
+            "니 오늘 왜 연락 안 했노? 내 기다린 거 아이거든?",
+            "세상에 맛있는 게 와 이리 많노... 복숭아 말고 치킨 묵고 싶다.",
+            "니 내 미니홈피 브금 좋지? 뻑간다 아이가."
+          ];
+          reply = genericReplies[Math.floor(Math.random() * genericReplies.length)];
+        }
+        setIlchonMessages(prev => [{ id: Date.now() + 1, author: '도연우', content: reply, isOwner: true }, ...prev]);
+    }, 800);
   };
 
   const renderContent = () => {
     switch (activeTab) {
-      case Tab.PROFILE: 
-        return <ProfileSection 
-            proteinCount={proteinCount} 
-            onGiftProtein={handleGiftProtein}
-            ilchonMessages={ilchonMessages}
-            onWriteIlchon={handleWriteIlchon}
-        />;
+      case Tab.PROFILE: return <ProfileSection ilchonMessages={ilchonMessages} onWriteIlchon={handleWriteIlchon} />;
       case Tab.FAMILY: return <FamilySection />;
+      case Tab.VILLAGE: return <VillageSection />;
       case Tab.CAPSULE: return <TimeCapsuleSection />;
-      default: return <ProfileSection 
-            proteinCount={proteinCount} 
-            onGiftProtein={handleGiftProtein}
-            ilchonMessages={ilchonMessages}
-            onWriteIlchon={handleWriteIlchon}
-      />;
+      default: return null;
     }
   };
 
   return (
-    <div className="min-h-screen p-4 sm:p-8 flex items-center justify-center">
-      {/* Main OS Window */}
-      <div className="w-full max-w-5xl bg-[#e0e0e0] border-t-2 border-l-2 border-white border-b-2 border-r-2 border-gray-600 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.5)] flex flex-col h-[90vh] max-h-[800px]">
+    <div className="h-full w-full bg-[#85a5ff] flex items-center justify-center p-0 sm:p-4 overflow-hidden">
+      <div className="w-full max-w-5xl bg-[#e0e0e0] border-2 border-white border-b-gray-600 border-r-gray-600 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)] flex flex-col h-full sm:max-h-[850px] overflow-hidden">
         
-        {/* Title Bar */}
-        <div className="bg-gradient-to-r from-blue-800 to-blue-600 px-2 py-1 flex justify-between items-center select-none">
-          <div className="flex items-center gap-2 text-white font-bold text-sm">
-            <img src="https://picsum.photos/20/20" alt="icon" className="w-4 h-4 border border-white" />
-            <span>Yeonwoo's Minihompy - Microsoft Internet Explorer</span>
+        <div className="bg-gradient-to-r from-blue-800 to-blue-600 px-2 py-1 flex justify-between items-center shrink-0">
+          <div className="flex items-center gap-2 text-white font-bold text-[10px] sm:text-xs truncate">
+            <img src="https://picsum.photos/20/20" alt="icon" className="w-3 h-3 sm:w-4 sm:h-4 border border-white" />
+            <span className="truncate">Yeonwoo's Retro Home - Internet Explorer</span>
           </div>
-          <div className="flex gap-1">
-             <button className="w-5 h-5 bg-[#c0c0c0] border border-white border-b-black border-r-black text-[10px] flex items-center justify-center font-bold active:border-t-black active:border-l-black active:border-b-white active:border-r-white">_</button>
-             <button className="w-5 h-5 bg-[#c0c0c0] border border-white border-b-black border-r-black text-[10px] flex items-center justify-center font-bold active:border-t-black active:border-l-black active:border-b-white active:border-r-white">□</button>
-             <button className="w-5 h-5 bg-[#c0c0c0] border border-white border-b-black border-r-black text-[10px] flex items-center justify-center font-bold active:border-t-black active:border-l-black active:border-b-white active:border-r-white">X</button>
+          <div className="flex gap-1 shrink-0">
+             <div className="w-4 h-4 bg-[#c0c0c0] border border-white border-b-black border-r-black text-[8px] flex items-center justify-center font-bold">_</div>
+             <div className="w-4 h-4 bg-[#c0c0c0] border border-white border-b-black border-r-black text-[8px] flex items-center justify-center font-bold">X</div>
           </div>
         </div>
 
-        {/* Menu Bar (Fake) */}
-        <div className="bg-[#ece9d8] text-black text-xs px-2 py-1 border-b border-gray-400 flex gap-4">
-            <span className="underline">F</span>ile <span className="underline">E</span>dit <span className="underline">V</span>iew <span className="underline">F</span>avorites <span className="underline">T</span>ools <span className="underline">H</span>elp
-        </div>
-
-        {/* Address Bar */}
-        <div className="bg-[#ece9d8] p-1 flex items-center gap-2 border-b border-gray-400 pb-2">
-            <span className="text-xs text-gray-500">Address</span>
-            <div className="bg-white border border-gray-500 text-sm px-2 py-0.5 flex-1 font-mono">
-                http://www.cyworld.com/yeonwoo_muscle_king
-            </div>
-            <button className="bg-[#ece9d8] border-2 border-white border-b-gray-600 border-r-gray-600 px-2 text-xs active:border-t-gray-600">Go</button>
-        </div>
-
-        {/* Content Area (The Minihompy) */}
-        <div className="flex-1 bg-gray-200 p-2 sm:p-6 overflow-hidden flex flex-col sm:flex-row gap-4">
-            
-            {/* Left Sidebar */}
-            <div className="w-full sm:w-64 bg-white border border-gray-400 rounded-lg p-4 flex flex-col gap-4 shadow-inner overflow-y-auto">
-                <div className="border border-gray-200 p-1">
-                    <img src="https://picsum.photos/id/1005/300/300" className="w-full aspect-square object-cover grayscale brightness-110" alt="Main" />
-                </div>
-                <div className="text-center space-y-2">
-                    <p className="text-xs text-blue-500 cursor-pointer hover:underline">Edit Profile ▶</p>
-                    <div className="border-t border-dotted border-gray-400 my-2"></div>
-                    <p className="text-sm font-bold">도연우 (25)</p>
-                    <p className="text-xs text-gray-500">♂ Male / ESFP</p>
-                    <div className="flex justify-center items-center gap-1 text-xs text-orange-500 mt-2">
-                         <span className="animate-pulse">❤️</span> Today: {1024 + proteinCount}
+        <div className="flex-1 bg-[#b0c4de] p-1 sm:p-3 overflow-hidden flex flex-col sm:flex-row gap-2 sm:gap-3">
+            <div className="w-full sm:w-48 md:w-56 bg-white border border-gray-400 rounded-lg p-2 flex flex-row sm:flex-col gap-2 shrink-0 overflow-hidden sm:shadow-inner">
+                <div 
+                  className="w-16 sm:w-full shrink-0 border border-gray-200 cursor-zoom-in group relative overflow-hidden"
+                  onClick={() => setSidebarImageExpanded(true)}
+                >
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center z-10">
+                        <ZoomIn size={20} className="text-white opacity-0 group-hover:opacity-100" />
                     </div>
+                    <img src={YEONWOO_PROFILE.sidebarImageUrl} className="w-full aspect-square object-cover" alt="Profile" />
                 </div>
                 
-                <div className="mt-auto bg-gray-100 p-2 rounded text-xs border border-gray-300">
-                    <div className="font-bold mb-1">📢 Today's BGM</div>
-                    <div className="flex items-center justify-between bg-white border border-gray-300 px-1 py-1 marquee overflow-hidden whitespace-nowrap">
-                        <div className={`flex items-center gap-1 ${bgmPlaying ? 'animate-marquee' : ''}`}>
-                           <Music size={10} /> 
-                           <span>도연우의 추천 BGM - 재생 중... </span>
+                <div className="flex-1 flex flex-col justify-center sm:text-center text-[10px] sm:text-xs min-w-0">
+                    <p className="font-bold truncate text-blue-900">도연우 (25)</p>
+                    <p className="text-gray-500 hidden sm:block">♂ ESFP / 3w2</p>
+                    <div className="text-orange-500 mt-0.5 sm:mt-1 font-bold">❤️ Today: 1024</div>
+
+                    <div className="mt-1 sm:mt-2 bg-[#f0f0f0] p-1 border-2 border-white border-b-gray-400 border-r-gray-400 rounded overflow-hidden">
+                        <div className="flex items-center justify-between font-bold text-[8px] sm:text-[9px] mb-1 px-1">
+                            <span className="text-blue-700">CYWORLD BGM</span>
+                            {audioError && <AlertCircle size={8} className="text-red-500" />}
                         </div>
-                    </div>
-                    <div className="flex justify-center mt-1 gap-2">
-                        <button onClick={() => setBgmPlaying(!bgmPlaying)} className="text-[10px] border border-gray-400 px-1 hover:bg-white active:bg-gray-200">
-                            {bgmPlaying ? '◼ Stop' : '▶ Play'}
+                        <div className="bg-white border border-gray-300 px-1 py-0.5 overflow-hidden whitespace-nowrap mb-1">
+                            <div className={`flex items-center gap-1 text-orange-600 font-bold ${bgmPlaying ? 'animate-marquee' : ''}`}>
+                               <Music size={8} /> 
+                               <span>{audioError ? '♬ 재생 불가' : (bgmPlaying ? '♬ Buzz - 가시 (도연우\'s Pick)' : '♬ 일촌 대환영!')}</span>
+                            </div>
+                        </div>
+                        <button 
+                            onClick={() => { setBgmPlaying(!bgmPlaying); setAudioError(false); }} 
+                            className="w-full text-[8px] sm:text-[9px] border border-gray-400 bg-[#e0e0e0] py-0.5 flex items-center justify-center gap-1 active:bg-gray-300 shadow-sm"
+                        >
+                            {bgmPlaying ? <><PauseCircle size={10}/> Stop</> : <><PlayCircle size={10}/> Play</>}
                         </button>
+                        <audio ref={audioRef} loop src="https://raw.githubusercontent.com/mirimirimiri2/1/main/buzz.mp3" onError={() => setAudioError(true)} />
                     </div>
-                    {/* Updated Source with confirm=t to bypass potential virus scan interstitials for medium files */}
-                    <audio ref={audioRef} loop src="https://docs.google.com/uc?export=download&id=1MBNafBQ4esjGSR4Qi0e6U8U6Jmk5zMxo&confirm=t" />
                 </div>
             </div>
 
-            {/* Main Content Area */}
-            <div className="flex-1 flex flex-col min-w-0">
-                <div className="bg-white border border-gray-400 rounded-lg p-1 shadow-inner h-full flex flex-col relative">
-                     {/* Inner Scrollable */}
-                     <div className="flex-1 overflow-y-auto p-4 sm:p-6 relative z-10 custom-scrollbar">
-                        <div className="mb-6 pb-2 border-b border-dotted border-gray-300 flex justify-between items-end">
-                            <h1 className="text-xl sm:text-2xl font-bold text-pink-500">
-                                우주최강 상남자의 홈피
+            <div className="flex-1 min-w-0 h-full relative flex flex-col">
+                <div className="lg:hidden flex bg-white/50 backdrop-blur-sm p-1 rounded-t-lg border-x border-t border-gray-400 gap-1 overflow-x-auto no-scrollbar shrink-0">
+                    <MobileNavItem active={activeTab === Tab.PROFILE} onClick={() => setActiveTab(Tab.PROFILE)} label="홈" icon={<Home size={12} />} />
+                    <MobileNavItem active={activeTab === Tab.FAMILY} onClick={() => setActiveTab(Tab.FAMILY)} label="인맥" icon={<Users size={12} />} />
+                    <MobileNavItem active={activeTab === Tab.VILLAGE} onClick={() => setActiveTab(Tab.VILLAGE)} label="마을" icon={<MapIcon size={12} />} />
+                    <MobileNavItem active={activeTab === Tab.CAPSULE} onClick={() => setActiveTab(Tab.CAPSULE)} label="보물" icon={<Box size={12} />} />
+                </div>
+
+                <div className="bg-white border border-gray-400 lg:rounded-lg shadow-inner flex-1 flex flex-col overflow-hidden relative">
+                     <div className="flex-1 overflow-y-auto p-3 sm:p-5 custom-scrollbar bg-white">
+                        <div className="mb-3 pb-2 border-b border-dotted border-gray-300 flex justify-between items-end">
+                            <h1 className="text-sm sm:text-xl font-bold text-pink-500 truncate flex items-center gap-1">
+                                <ChevronRight size={16} className="text-gray-400" />
+                                {activeTab === Tab.PROFILE && "연우의 미니홈피"}
+                                {activeTab === Tab.FAMILY && "우리는 일촌관계"}
+                                {activeTab === Tab.VILLAGE && "추억의 도화마을"}
+                                {activeTab === Tab.CAPSULE && "시간이 멈춘 상자"}
                             </h1>
-                            <span className="text-xs text-gray-400 font-mono">http://.../muscle_king</span>
                         </div>
-                        {renderContent()}
+                        <div className="pb-4">
+                          {renderContent()}
+                        </div>
                      </div>
-
-                     {/* Right Side Tabs (Absolute positioned for desktop visual, relative for mobile) */}
-                     <div className="absolute top-8 -right-[34px] flex flex-col gap-2 z-0 hidden sm:flex">
-                        <TabButton 
-                            active={activeTab === Tab.PROFILE} 
-                            onClick={() => setActiveTab(Tab.PROFILE)} 
-                            label="홈" 
-                            color="bg-pink-400"
-                            icon={<Home size={16} />}
-                        />
-                        <TabButton 
-                            active={activeTab === Tab.FAMILY} 
-                            onClick={() => setActiveTab(Tab.FAMILY)} 
-                            label="인맥" 
-                            color="bg-blue-400"
-                            icon={<Users size={16} />}
-                        />
-                        <TabButton 
-                            active={activeTab === Tab.CAPSULE} 
-                            onClick={() => setActiveTab(Tab.CAPSULE)} 
-                            label="보물" 
-                            color="bg-yellow-400"
-                            icon={<Box size={16} />}
-                        />
+                     <div className="absolute top-4 -right-[28px] flex flex-col gap-1 z-0 hidden lg:flex">
+                        <TabButton active={activeTab === Tab.PROFILE} onClick={() => setActiveTab(Tab.PROFILE)} label="홈" color="bg-pink-400" icon={<Home size={14} />} />
+                        <TabButton active={activeTab === Tab.FAMILY} onClick={() => setActiveTab(Tab.FAMILY)} label="인맥" color="bg-blue-400" icon={<Users size={14} />} />
+                        <TabButton active={activeTab === Tab.VILLAGE} onClick={() => setActiveTab(Tab.VILLAGE)} label="마을" color="bg-green-400" icon={<MapIcon size={14} />} />
+                        <TabButton active={activeTab === Tab.CAPSULE} onClick={() => setActiveTab(Tab.CAPSULE)} label="보물" color="bg-yellow-400" icon={<Box size={14} />} />
                      </div>
                 </div>
             </div>
-
-            {/* Mobile Tabs (Bottom) */}
-             <div className="sm:hidden flex justify-between bg-white border border-gray-400 p-1 rounded-lg">
-                <button 
-                    onClick={() => setActiveTab(Tab.PROFILE)} 
-                    className={`flex-1 py-2 text-xs font-bold ${activeTab === Tab.PROFILE ? 'bg-pink-100 text-pink-600' : 'text-gray-500'}`}
-                >
-                    프로필
-                </button>
-                <button 
-                    onClick={() => setActiveTab(Tab.FAMILY)} 
-                    className={`flex-1 py-2 text-xs font-bold ${activeTab === Tab.FAMILY ? 'bg-blue-100 text-blue-600' : 'text-gray-500'}`}
-                >
-                    인맥
-                </button>
-                <button 
-                    onClick={() => setActiveTab(Tab.CAPSULE)} 
-                    className={`flex-1 py-2 text-xs font-bold ${activeTab === Tab.CAPSULE ? 'bg-yellow-100 text-yellow-600' : 'text-gray-500'}`}
-                >
-                    보물
-                </button>
-             </div>
-
         </div>
 
-        {/* Footer Status Bar */}
-        <div className="bg-[#ece9d8] border-t border-gray-400 px-2 py-1 flex justify-between items-center text-xs text-gray-600 select-none">
+        <div className="bg-[#ece9d8] border-t border-gray-400 px-2 py-0.5 flex justify-between items-center text-[9px] text-gray-600 select-none shrink-0">
             <div className="flex gap-4">
-                <span>Done</span>
-                <span className="hidden sm:inline">Internet</span>
+                <span className="flex items-center gap-1"><img src="https://picsum.photos/10/10?start" alt="" className="w-2.5 h-2.5" /> Start</span>
             </div>
             <div className="flex gap-2 items-center">
-                <Wifi size={12} />
-                <BatteryMedium size={12} />
-                <span>100%</span>
+                <Wifi size={10} />
+                <BatteryMedium size={10} />
+                <span className="hidden sm:inline">100%</span>
+                <span className="font-mono">{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
             </div>
         </div>
       </div>
+
+      {/* Sidebar Image Portal Modal */}
+      {sidebarImageExpanded && createPortal(
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fade-in" onClick={() => setSidebarImageExpanded(false)}>
+            <div className="bg-[#e0e0e0] border-2 border-white border-b-gray-600 border-r-gray-600 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.5)] max-w-lg w-full overflow-hidden" onClick={e => e.stopPropagation()}>
+                <div className="bg-gradient-to-r from-blue-800 to-blue-600 px-2 py-1 flex justify-between items-center">
+                    <span className="text-white font-bold text-xs">Profile View - Sidebar</span>
+                    <button onClick={() => setSidebarImageExpanded(false)} className="w-5 h-5 bg-[#c0c0c0] border border-white border-b-black border-r-black flex items-center justify-center text-[10px] font-bold">X</button>
+                </div>
+                <div className="p-4 bg-white m-1 border border-gray-400 flex flex-col items-center">
+                    <img src={YEONWOO_PROFILE.sidebarImageUrl} className="max-w-full max-h-[70vh] object-contain border-2 border-gray-100" alt="Expanded Profile" />
+                    <button onClick={() => setSidebarImageExpanded(false)} className="mt-4 px-10 py-2 bg-[#c0c0c0] border border-white border-b-black border-r-black font-bold text-sm">확인 (OK)</button>
+                </div>
+            </div>
+        </div>,
+        document.body
+      )}
     </div>
   );
 };
 
-// Helper for side tabs
 const TabButton = ({ active, onClick, label, color, icon }: any) => (
-    <button 
-        onClick={onClick}
-        className={`
-            w-[32px] py-3 rounded-r-lg border-t border-r border-b border-gray-400 shadow-sm
-            flex flex-col items-center justify-center gap-1 text-xs text-white font-bold writing-mode-vertical transition-transform
-            ${active ? `${color} translate-x-0` : 'bg-gray-400 -translate-x-1 hover:bg-gray-500'}
-        `}
-    >
+    <button onClick={onClick} className={`w-[28px] py-3 rounded-r-md border border-gray-400 flex flex-col items-center justify-center gap-1 text-[10px] text-white font-bold transition-all ${active ? `${color} translate-x-0` : 'bg-gray-400 -translate-x-1 hover:bg-gray-500'}`}>
         {icon}
-        <span className="mt-1" style={{writingMode: 'vertical-rl'}}>{label}</span>
+        <span style={{writingMode: 'vertical-rl'}}>{label}</span>
+    </button>
+);
+
+const MobileNavItem = ({ active, onClick, label, icon }: any) => (
+    <button onClick={onClick} className={`flex-1 flex flex-col items-center justify-center gap-0.5 py-1 px-2 rounded-t transition-all border-b-2 ${active ? 'bg-white text-blue-700 border-blue-700 font-bold' : 'text-gray-500 border-transparent hover:bg-gray-200'}`}>
+        {icon}
+        <span className="text-[8px] font-bold">{label}</span>
     </button>
 );
 

@@ -18,6 +18,8 @@ export interface CharacterProfile {
   job?: string;
   mbti: string;
   description: string;
+  imageUrl?: string;
+  sidebarImageUrl?: string;
   relationships?: string[];
   complex?: string[];
   likes?: string[];
@@ -34,5 +36,11 @@ export interface IlchonMessage {
   id: number;
   author: string;
   content: string;
-  isOwner: boolean; // true if written by Yeonwoo
+  isOwner: boolean;
+}
+
+export interface VillageLocation {
+  name: string;
+  description: string;
+  tag: string;
 }

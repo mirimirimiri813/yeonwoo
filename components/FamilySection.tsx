@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { SUPPORTING_CAST } from '../constants';
 import { RetroCard } from './RetroCard';
 import { CharacterRole } from '../types';
-import { Crown, Shield, Siren } from 'lucide-react';
+import { Crown, Shield, Siren, ZoomIn, X } from 'lucide-react';
 
 export const FamilySection: React.FC = () => {
+  const [expandedImage, setExpandedImage] = useState<{ url: string; name: string } | null>(null);
+
   const getIcon = (role: CharacterRole) => {
     switch (role) {
       case CharacterRole.MOTHER: return <Crown className="w-5 h-5 text-yellow-600" />;
@@ -26,16 +29,27 @@ export const FamilySection: React.FC = () => {
         {SUPPORTING_CAST.map((char) => (
           <RetroCard 
             key={char.id} 
-            title={char.name}
+            title={`${char.name} (${char.age.current}세)`}
             color={char.role === CharacterRole.RIVAL ? 'gray' : 'pink'}
           >
             <div className="flex flex-col sm:flex-row gap-4">
                 <div className="shrink-0 flex flex-col items-center gap-2">
-                    <img 
-                        src={`https://picsum.photos/150/150?random=${char.id.length}`} 
-                        alt={char.name} 
-                        className="w-24 h-24 sm:w-32 sm:h-32 object-cover border-2 border-black p-1 bg-white" 
-                    />
+                    <div 
+                      className="relative cursor-zoom-in group overflow-hidden border-2 border-black p-1 bg-white"
+                      onClick={() => char.imageUrl && setExpandedImage({ url: char.imageUrl, name: char.name })}
+                    >
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center z-10">
+                            <ZoomIn size={24} className="text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </div>
+                        <img 
+                            src={char.imageUrl} 
+                            alt={char.name} 
+                            className="w-24 h-24 sm:w-32 sm:h-32 object-cover transition-all duration-300" 
+                        />
+                        <div className="bg-black/60 text-white text-[8px] absolute bottom-1 right-1 px-1 font-bold pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
+                            ZOOM
+                        </div>
+                    </div>
                     <div className="flex items-center gap-1 font-bold text-sm bg-white border border-black px-2 py-1">
                         {getIcon(char.role)}
                         {char.role === CharacterRole.MOTHER && '서열 1위'}
@@ -76,6 +90,39 @@ export const FamilySection: React.FC = () => {
           </RetroCard>
         ))}
       </div>
+
+      {/* Shared Image Portal Modal for Supporting Cast */}
+      {expandedImage && createPortal(
+        <div 
+          className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fade-in" 
+          onClick={() => setExpandedImage(null)}
+        >
+          <div 
+            className="bg-[#e0e0e0] border-2 border-white border-b-gray-600 border-r-gray-600 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.5)] max-w-lg w-full overflow-hidden animate-bounce-short" 
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="bg-gradient-to-r from-blue-800 to-blue-600 px-2 py-1 flex justify-between items-center">
+              <span className="text-white font-bold text-xs truncate">Character View - {expandedImage.name}</span>
+              <button onClick={() => setExpandedImage(null)} className="w-5 h-5 bg-[#c0c0c0] border border-white border-b-black border-r-black flex items-center justify-center text-[10px] font-bold active:bg-gray-400">X</button>
+            </div>
+            <div className="p-4 bg-white m-1 border border-gray-400 flex flex-col items-center">
+              <div className="border-4 border-double border-gray-300 p-2 bg-gray-50 w-full flex justify-center">
+                <img src={expandedImage.url} className="max-w-full max-h-[70vh] object-contain drop-shadow-lg" alt={expandedImage.name} />
+              </div>
+              <div className="mt-4 flex flex-col items-center gap-1">
+                <p className="text-[10px] text-blue-800 font-bold uppercase tracking-widest">{expandedImage.name} Profile Photo</p>
+                <button 
+                    onClick={() => setExpandedImage(null)}
+                    className="mt-2 px-10 py-2 bg-[#c0c0c0] border border-white border-b-black border-r-black font-bold text-xs sm:text-sm active:border-black active:border-b-white active:border-r-white hover:bg-gray-100 transition-colors"
+                >
+                    확인 (OK)
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
     </div>
   );
 };
