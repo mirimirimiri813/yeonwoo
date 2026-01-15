@@ -59,9 +59,6 @@ export const TimeCapsuleSection: React.FC = () => {
                             <div className="font-hand text-lg leading-relaxed text-gray-700 whitespace-pre-wrap font-bold min-h-[200px]">
                                 {TIME_CAPSULE_LETTER}
                             </div>
-                            <div className="mt-4 flex justify-end">
-                                <img src="https://picsum.photos/100/100?random=stamp" alt="stamp" className="w-16 h-16 opacity-30 mix-blend-multiply grayscale contrast-150" style={{borderRadius: '50%'}} />
-                            </div>
                         </div>
                     </div>
 
