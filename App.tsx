@@ -4,7 +4,7 @@ import { ProfileSection } from './components/ProfileSection';
 import { FamilySection } from './components/FamilySection';
 import { TimeCapsuleSection } from './components/TimeCapsuleSection';
 import { VillageSection } from './components/VillageSection';
-import { Home, Users, Box, Map as MapIcon, Music, BatteryMedium, Wifi, AlertCircle, PlayCircle, PauseCircle, ChevronRight, X, ZoomIn } from 'lucide-react';
+import { Home, Users, Box, Map as MapIcon, PlayCircle, PauseCircle, Minimize, X, Square, Search, MoreHorizontal } from 'lucide-react';
 import { IlchonMessage } from './types';
 import { YEONWOO_PROFILE } from './constants';
 
@@ -16,9 +16,8 @@ enum Tab {
 }
 
 const App: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<Tab>(Tab.PROFILE);
+  const [activeTab, setActiveTab] = useState<Tab>(Tab.VILLAGE);
   const [bgmPlaying, setBgmPlaying] = useState(false);
-  const [audioError, setAudioError] = useState(false);
   const [sidebarImageExpanded, setSidebarImageExpanded] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
   
@@ -27,13 +26,10 @@ const App: React.FC = () => {
   useEffect(() => {
     if (audioRef.current) {
       if (bgmPlaying) {
-        const playPromise = audioRef.current.play();
-        if (playPromise !== undefined) {
-          playPromise.catch(e => {
-            console.warn("Autoplay blocked or link issue:", e);
+        audioRef.current.play().catch(e => {
+            console.warn("Autoplay blocked:", e);
             setBgmPlaying(false);
-          });
-        }
+        });
       } else {
         audioRef.current.pause();
       }
@@ -44,41 +40,6 @@ const App: React.FC = () => {
     if (!msg.trim()) return;
     const userMsg: IlchonMessage = { id: Date.now(), author: '나(User)', content: msg, isOwner: false };
     setIlchonMessages(prev => [userMsg, ...prev]);
-
-    setTimeout(() => {
-        let reply = "";
-        if (msg.includes("귀엽다") || msg.includes("귀여워")) {
-          reply = "마! 내가 어딜 봐서 귀엽노? 상남자라고 불러라! 확 마!";
-        } else if (msg.includes("멋있다") || msg.includes("멋져") || msg.includes("잘생겼다")) {
-          reply = "흥, 이제 알았나? 역시 내 맘 알아주는 건 니밖에 없다. (코 쓱)";
-        } else if (msg.includes("키") || msg.includes("난쟁이") || msg.includes("작다")) {
-          reply = "야! 내 아직 성장판 안 닫혔거든? 우유 맨날 묵고 있다. 조용히 해라.";
-        } else if (msg.includes("상남자")) {
-          reply = "오.. 니 좀 볼 줄 아네? 맞아, 내가 이 마을 최고의 상남자 도연우 아이겠나.";
-        } else if (msg.includes("태성")) {
-          reply = "강태성 그 자슥 얘기는 왜 꺼내는데? 기분 확 잡치네. 걔랑 놀지 마라!";
-        } else if (msg.includes("운동") || msg.includes("근육") || msg.includes("단백질")) {
-          reply = "오늘도 쇠질 빡세게 했다. 조만간 내 팔뚝 터질라 카니까 기대해라.";
-        } else if (msg.includes("복숭아") || msg.includes("과수원") || msg.includes("사과")) {
-          reply = "우리 집 복숭아가 젤 맛있는 건 우째 알고? 담에 마을 오면 내(오빠)가 하나 줄게.";
-        } else if (msg.includes("사랑해") || msg.includes("좋아해")) {
-          reply = "마, 갑자기 머라카노... (얼굴 빨개짐) 나중에 과수원 뒤에서 얘기하자.";
-        } else {
-          const genericReplies = [
-            "마! 니 내 짝꿍 맞네. 자주 좀 들러라.",
-            "운동이나 해라. 건강이 최고다.",
-            "밥은 묵고 댕기나? 시골 오면 내가 맛있는 거 사줄게.",
-            "내(오빠)가 항상 응원하는 거 알제? 기죽지 마라.",
-            "아~ 오늘따라 심심하네. 머하고 사노?",
-            "과수원 일 돕기 진짜 싫다... 니가 와서 좀 도와주면 안 되나?",
-            "니 오늘 왜 연락 안 했노? 내 기다린 거 아이거든?",
-            "세상에 맛있는 게 와 이리 많노... 복숭아 말고 치킨 묵고 싶다.",
-            "니 내 미니홈피 브금 좋지? 뻑간다 아이가."
-          ];
-          reply = genericReplies[Math.floor(Math.random() * genericReplies.length)];
-        }
-        setIlchonMessages(prev => [{ id: Date.now() + 1, author: '도연우', content: reply, isOwner: true }, ...prev]);
-    }, 800);
   };
 
   const renderContent = () => {
@@ -92,117 +53,128 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="h-full w-full bg-[#85a5ff] flex items-center justify-center p-0 sm:p-4 overflow-hidden">
-      <div className="w-full max-w-5xl bg-[#e0e0e0] border-2 border-white border-b-gray-600 border-r-gray-600 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)] flex flex-col h-full sm:max-h-[850px] overflow-hidden">
+    <div className="h-[100dvh] w-full bg-[#85a5ff] flex items-center justify-center p-0 sm:p-4 overflow-hidden font-['DungGeunMo']">
+      
+      {/* Main Window Frame */}
+      <div className="w-full h-full sm:max-w-[1100px] sm:h-[90vh] bg-[#ece9d8] flex flex-col shadow-2xl sm:rounded-lg overflow-hidden border-2 border-[#f5f5f5] border-r-[#555] border-b-[#555]">
         
-        <div className="bg-gradient-to-r from-blue-800 to-blue-600 px-2 py-1 flex justify-between items-center shrink-0">
-          <div className="flex items-center gap-2 text-white font-bold text-[10px] sm:text-xs truncate">
-            <img src="https://picsum.photos/20/20" alt="icon" className="w-3 h-3 sm:w-4 sm:h-4 border border-white" />
-            <span className="truncate">Yeonwoo's Retro Home - Internet Explorer</span>
+        {/* Title Bar */}
+        <div className="bg-gradient-to-r from-[#3a6ea5] to-[#1e488f] h-8 flex items-center justify-between px-2 shrink-0 select-none">
+          <div className="flex items-center gap-2 text-white font-bold text-xs sm:text-sm">
+            <img src={YEONWOO_PROFILE.sidebarImageUrl} alt="icon" className="w-4 h-4 border border-white/50 bg-white" />
+            <span className="truncate drop-shadow-md">Yeonwoo's Retro Home - Internet Explorer</span>
           </div>
-          <div className="flex gap-1 shrink-0">
-             <div className="w-4 h-4 bg-[#c0c0c0] border border-white border-b-black border-r-black text-[8px] flex items-center justify-center font-bold">_</div>
-             <div className="w-4 h-4 bg-[#c0c0c0] border border-white border-b-black border-r-black text-[8px] flex items-center justify-center font-bold">X</div>
+          <div className="flex gap-1">
+            <WindowControlIcon icon={<Minimize size={10} />} />
+            <WindowControlIcon icon={<Square size={10} />} />
+            <WindowControlIcon icon={<X size={10} />} bg="bg-[#d34736] text-white" />
           </div>
         </div>
 
-        <div className="flex-1 bg-[#b0c4de] p-1 sm:p-3 overflow-hidden flex flex-col sm:flex-row gap-2 sm:gap-3">
-            <div className="w-full sm:w-48 md:w-56 bg-white border border-gray-400 rounded-lg p-2 flex flex-row sm:flex-col gap-2 shrink-0 overflow-hidden sm:shadow-inner">
-                <div 
-                  className="w-16 sm:w-full shrink-0 border border-gray-200 cursor-zoom-in group relative overflow-hidden"
-                  onClick={() => setSidebarImageExpanded(true)}
-                >
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center z-10">
-                        <ZoomIn size={20} className="text-white opacity-0 group-hover:opacity-100" />
+        {/* Address Bar */}
+        <div className="bg-[#ece9d8] border-b border-[#aca899] p-1 flex items-center gap-2 text-xs shrink-0 px-2 py-1.5 shadow-[inset_0_1px_0_white]">
+             <span className="text-gray-500 hidden sm:inline">주소(D)</span>
+             <div className="flex-1 bg-white border border-[#7f9db9] px-2 py-0.5 flex items-center h-6">
+                <img src="https://raw.githubusercontent.com/mirimirimiri2/1/refs/heads/main/%EB%8F%84%EC%97%B0%EC%9A%B0%20%ED%94%84%EC%82%AC.webp" className="w-3 h-3 mr-2 grayscale opacity-50" />
+                <span className="text-black truncate">http://www.cyworld.com/yeonwoo_love</span>
+             </div>
+             <button className="flex items-center gap-1 px-3 py-0.5 bg-[#ece9d8] border border-white border-b-[#aca899] border-r-[#aca899] hover:border-[#aca899] hover:border-t-white active:border-t-[#aca899] active:border-l-[#aca899] active:bg-[#e0e0e0] h-6 text-black">
+                이동 <Search size={10} />
+             </button>
+        </div>
+
+        {/* Inner Content Area */}
+        <div className="flex-1 bg-[#b0c4de] p-3 sm:p-5 flex flex-col lg:flex-row gap-4 overflow-hidden relative">
+            
+            {/* Left Sidebar (Profile) */}
+            <aside className="w-full lg:w-64 bg-white rounded-[15px] p-4 shadow-[2px_2px_5px_rgba(0,0,0,0.1)] flex flex-col gap-3 border border-[#aaa] shrink-0 h-auto lg:h-full overflow-y-auto no-scrollbar z-10">
+                <div className="bg-[#f0f0f0] p-1 rounded border border-[#ddd] shadow-inner">
+                    <div 
+                        className="w-full aspect-square bg-white border border-[#ccc] cursor-pointer overflow-hidden relative group"
+                        onClick={() => setSidebarImageExpanded(true)}
+                    >
+                        <img src={YEONWOO_PROFILE.sidebarImageUrl} className="w-full h-full object-cover" alt="Profile" />
                     </div>
-                    <img src={YEONWOO_PROFILE.sidebarImageUrl} className="w-full aspect-square object-cover" alt="Profile" />
                 </div>
+
+                <div className="text-center space-y-1.5 mt-1 border-b-2 border-dotted border-gray-300 pb-3">
+                    <div className="text-blue-800 font-bold text-base flex justify-center items-center gap-1">
+                       도연우 <span className="text-xs text-gray-500 font-normal">(25)</span>
+                    </div>
+                    <p className="text-gray-400 text-[10px] flex items-center justify-center gap-1">
+                        ♂ ESFP / 3w2
+                    </p>
+                    <div className="text-orange-500 font-bold text-xs flex items-center justify-center gap-1">
+                        <span className="text-[10px] cursor-pointer">♥ Today:</span> 
+                        <span className="bg-orange-50 text-orange-600 px-1 rounded">1,024</span>
+                    </div>
+                </div>
+
+                <div className="flex-1 min-h-[20px]"></div>
+
+                {/* BGM Player */}
+                <div className="mt-auto">
+                    <div className="text-[9px] font-bold text-blue-500 mb-1 pl-1">CYWORLD BGM</div>
+                    <div className="bg-[#f5f5f5] border border-[#ccc] rounded p-1.5 shadow-sm">
+                        <div className="bg-white border border-[#ddd] h-5 flex items-center px-2 mb-1 overflow-hidden whitespace-nowrap">
+                             <div className={`text-[10px] text-black ${bgmPlaying ? 'animate-marquee' : ''}`}>
+                                 {bgmPlaying ? '♬ Buzz - 가시 (겁쟁이 아님)' : '♬ 일촌 대환영!'}
+                             </div>
+                        </div>
+                        <div className="flex gap-1">
+                            <button 
+                                onClick={() => setBgmPlaying(!bgmPlaying)}
+                                className="flex-1 bg-[#e0e0e0] border border-white border-b-[#888] border-r-[#888] text-[10px] py-0.5 active:border-t-[#888] active:border-l-[#888] active:bg-[#ccc] flex items-center justify-center gap-1"
+                            >
+                                {bgmPlaying ? <PauseCircle size={10}/> : <PlayCircle size={10}/>} 
+                                {bgmPlaying ? 'Stop' : 'Play'}
+                            </button>
+                        </div>
+                    </div>
+                    <audio ref={audioRef} loop src="https://raw.githubusercontent.com/mirimirimiri2/1/main/buzz.mp3" />
+                </div>
+            </aside>
+
+            {/* Right Main Content */}
+            <main className="flex-1 flex flex-col min-w-0 h-full relative z-0">
                 
-                <div className="flex-1 flex flex-col justify-center sm:text-center text-[10px] sm:text-xs min-w-0">
-                    <p className="font-bold truncate text-blue-900">도연우 (25)</p>
-                    <p className="text-gray-500 hidden sm:block">♂ ESFP / 3w2</p>
-                    <div className="text-orange-500 mt-0.5 sm:mt-1 font-bold">❤️ Today: 1024</div>
+                {/* Tabs */}
+                <div className="flex gap-1 pl-2 shrink-0 h-8 sm:h-9 items-end">
+                    <TopTab active={activeTab === Tab.PROFILE} onClick={() => setActiveTab(Tab.PROFILE)} label="홈" icon={<Home size={14} />} />
+                    <TopTab active={activeTab === Tab.FAMILY} onClick={() => setActiveTab(Tab.FAMILY)} label="인맥" icon={<Users size={14} />} />
+                    <TopTab active={activeTab === Tab.VILLAGE} onClick={() => setActiveTab(Tab.VILLAGE)} label="마을" icon={<MapIcon size={14} />} />
+                    <TopTab active={activeTab === Tab.CAPSULE} onClick={() => setActiveTab(Tab.CAPSULE)} label="보물" icon={<Box size={14} />} />
+                </div>
 
-                    <div className="mt-1 sm:mt-2 bg-[#f0f0f0] p-1 border-2 border-white border-b-gray-400 border-r-gray-400 rounded overflow-hidden">
-                        <div className="flex items-center justify-between font-bold text-[8px] sm:text-[9px] mb-1 px-1">
-                            <span className="text-blue-700">CYWORLD BGM</span>
-                            {audioError && <AlertCircle size={8} className="text-red-500" />}
-                        </div>
-                        <div className="bg-white border border-gray-300 px-1 py-0.5 overflow-hidden whitespace-nowrap mb-1">
-                            <div className={`flex items-center gap-1 text-orange-600 font-bold ${bgmPlaying ? 'animate-marquee' : ''}`}>
-                               <Music size={8} /> 
-                               <span>{audioError ? '♬ 재생 불가' : (bgmPlaying ? '♬ Buzz - 가시 (도연우\'s Pick)' : '♬ 일촌 대환영!')}</span>
-                            </div>
-                        </div>
-                        <button 
-                            onClick={() => { setBgmPlaying(!bgmPlaying); setAudioError(false); }} 
-                            className="w-full text-[8px] sm:text-[9px] border border-gray-400 bg-[#e0e0e0] py-0.5 flex items-center justify-center gap-1 active:bg-gray-300 shadow-sm"
-                        >
-                            {bgmPlaying ? <><PauseCircle size={10}/> Stop</> : <><PlayCircle size={10}/> Play</>}
-                        </button>
-                        <audio ref={audioRef} loop src="https://raw.githubusercontent.com/mirimirimiri2/1/main/buzz.mp3" onError={() => setAudioError(true)} />
+                {/* Content White Box */}
+                <div className="flex-1 bg-white rounded-tr-[15px] rounded-b-[15px] border border-[#aaa] shadow-[3px_3px_10px_rgba(0,0,0,0.05)] p-4 sm:p-8 overflow-y-auto custom-scrollbar relative">
+                    <div className="animate-fade-in">
+                        {renderContent()}
                     </div>
                 </div>
-            </div>
-
-            <div className="flex-1 min-w-0 h-full relative flex flex-col">
-                <div className="lg:hidden flex bg-white/50 backdrop-blur-sm p-1 rounded-t-lg border-x border-t border-gray-400 gap-1 overflow-x-auto no-scrollbar shrink-0">
-                    <MobileNavItem active={activeTab === Tab.PROFILE} onClick={() => setActiveTab(Tab.PROFILE)} label="홈" icon={<Home size={12} />} />
-                    <MobileNavItem active={activeTab === Tab.FAMILY} onClick={() => setActiveTab(Tab.FAMILY)} label="인맥" icon={<Users size={12} />} />
-                    <MobileNavItem active={activeTab === Tab.VILLAGE} onClick={() => setActiveTab(Tab.VILLAGE)} label="마을" icon={<MapIcon size={12} />} />
-                    <MobileNavItem active={activeTab === Tab.CAPSULE} onClick={() => setActiveTab(Tab.CAPSULE)} label="보물" icon={<Box size={12} />} />
-                </div>
-
-                <div className="bg-white border border-gray-400 lg:rounded-lg shadow-inner flex-1 flex flex-col overflow-hidden relative">
-                     <div className="flex-1 overflow-y-auto p-3 sm:p-5 custom-scrollbar bg-white">
-                        <div className="mb-3 pb-2 border-b border-dotted border-gray-300 flex justify-between items-end">
-                            <h1 className="text-sm sm:text-xl font-bold text-pink-500 truncate flex items-center gap-1">
-                                <ChevronRight size={16} className="text-gray-400" />
-                                {activeTab === Tab.PROFILE && "연우의 미니홈피"}
-                                {activeTab === Tab.FAMILY && "우리는 일촌관계"}
-                                {activeTab === Tab.VILLAGE && "추억의 도화마을"}
-                                {activeTab === Tab.CAPSULE && "시간이 멈춘 상자"}
-                            </h1>
-                        </div>
-                        <div className="pb-4">
-                          {renderContent()}
-                        </div>
-                     </div>
-                     <div className="absolute top-4 -right-[28px] flex flex-col gap-1 z-0 hidden lg:flex">
-                        <TabButton active={activeTab === Tab.PROFILE} onClick={() => setActiveTab(Tab.PROFILE)} label="홈" color="bg-pink-400" icon={<Home size={14} />} />
-                        <TabButton active={activeTab === Tab.FAMILY} onClick={() => setActiveTab(Tab.FAMILY)} label="인맥" color="bg-blue-400" icon={<Users size={14} />} />
-                        <TabButton active={activeTab === Tab.VILLAGE} onClick={() => setActiveTab(Tab.VILLAGE)} label="마을" color="bg-green-400" icon={<MapIcon size={14} />} />
-                        <TabButton active={activeTab === Tab.CAPSULE} onClick={() => setActiveTab(Tab.CAPSULE)} label="보물" color="bg-yellow-400" icon={<Box size={14} />} />
-                     </div>
-                </div>
-            </div>
+            </main>
         </div>
 
-        <div className="bg-[#ece9d8] border-t border-gray-400 px-2 py-0.5 flex justify-between items-center text-[9px] text-gray-600 select-none shrink-0">
-            <div className="flex gap-4">
-                <span className="flex items-center gap-1"><img src="https://picsum.photos/10/10?start" alt="" className="w-2.5 h-2.5" /> Start</span>
-            </div>
-            <div className="flex gap-2 items-center">
-                <Wifi size={10} />
-                <BatteryMedium size={10} />
-                <span className="hidden sm:inline">100%</span>
-                <span className="font-mono">{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-            </div>
+        {/* Bottom Status Bar */}
+        <div className="bg-[#ece9d8] border-t border-[#aca899] h-6 flex items-center justify-between px-2 text-[10px] select-none shrink-0 shadow-[inset_0_1px_0_white]">
+             <div className="flex items-center gap-2 text-gray-600">
+                <div className="w-2.5 h-2.5 bg-green-500 rounded-full border border-green-700 shadow-[inset_1px_1px_2px_rgba(255,255,255,0.5)]"></div>
+                <span className="font-bold">Online</span>
+             </div>
+             <div className="flex gap-4 text-gray-500">
+                <span className="hidden sm:inline">Copyright ⓒ Cyworld clone. All rights reserved.</span>
+                <span className="font-mono">{new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+             </div>
         </div>
+
       </div>
 
-      {/* Sidebar Image Portal Modal */}
+      {/* Expanded Image Modal */}
       {sidebarImageExpanded && createPortal(
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fade-in" onClick={() => setSidebarImageExpanded(false)}>
-            <div className="bg-[#e0e0e0] border-2 border-white border-b-gray-600 border-r-gray-600 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.5)] max-w-lg w-full overflow-hidden" onClick={e => e.stopPropagation()}>
-                <div className="bg-gradient-to-r from-blue-800 to-blue-600 px-2 py-1 flex justify-between items-center">
-                    <span className="text-white font-bold text-xs">Profile View - Sidebar</span>
-                    <button onClick={() => setSidebarImageExpanded(false)} className="w-5 h-5 bg-[#c0c0c0] border border-white border-b-black border-r-black flex items-center justify-center text-[10px] font-bold">X</button>
-                </div>
-                <div className="p-4 bg-white m-1 border border-gray-400 flex flex-col items-center">
-                    <img src={YEONWOO_PROFILE.sidebarImageUrl} className="max-w-full max-h-[70vh] object-contain border-2 border-gray-100" alt="Expanded Profile" />
-                    <button onClick={() => setSidebarImageExpanded(false)} className="mt-4 px-10 py-2 bg-[#c0c0c0] border border-white border-b-black border-r-black font-bold text-sm">확인 (OK)</button>
-                </div>
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in" onClick={() => setSidebarImageExpanded(false)}>
+            <div className="max-w-md w-full bg-white p-2 rounded shadow-2xl" onClick={e => e.stopPropagation()}>
+                <img src={YEONWOO_PROFILE.sidebarImageUrl} className="w-full h-auto rounded max-h-[80vh] object-contain" alt="Full" />
+                <button onClick={() => setSidebarImageExpanded(false)} className="w-full mt-2 py-2 bg-gray-200 font-bold text-sm hover:bg-gray-300 rounded border border-gray-400">닫기</button>
             </div>
         </div>,
         document.body
@@ -211,17 +183,24 @@ const App: React.FC = () => {
   );
 };
 
-const TabButton = ({ active, onClick, label, color, icon }: any) => (
-    <button onClick={onClick} className={`w-[28px] py-3 rounded-r-md border border-gray-400 flex flex-col items-center justify-center gap-1 text-[10px] text-white font-bold transition-all ${active ? `${color} translate-x-0` : 'bg-gray-400 -translate-x-1 hover:bg-gray-500'}`}>
+const WindowControlIcon = ({ icon, bg = "bg-[#ece9d8]" }: { icon: React.ReactNode, bg?: string }) => (
+    <div className={`w-4 h-4 ${bg} border border-white border-b-[#888] border-r-[#888] flex items-center justify-center active:border-t-[#888] active:border-l-[#888] active:bg-[#ccc] cursor-pointer`}>
         {icon}
-        <span style={{writingMode: 'vertical-rl'}}>{label}</span>
-    </button>
+    </div>
 );
 
-const MobileNavItem = ({ active, onClick, label, icon }: any) => (
-    <button onClick={onClick} className={`flex-1 flex flex-col items-center justify-center gap-0.5 py-1 px-2 rounded-t transition-all border-b-2 ${active ? 'bg-white text-blue-700 border-blue-700 font-bold' : 'text-gray-500 border-transparent hover:bg-gray-200'}`}>
+const TopTab = ({ active, onClick, label, icon }: any) => (
+    <button 
+        onClick={onClick}
+        className={`
+            px-3 sm:px-6 h-8 sm:h-9 rounded-t-[10px] flex items-center gap-1.5 text-xs sm:text-sm font-bold transition-all relative top-[1px]
+            ${active 
+                ? 'bg-white text-[#3a6ea5] border border-[#aaa] border-b-white z-10 shadow-[0_-2px_3px_rgba(0,0,0,0.05)]' 
+                : 'bg-[#e0e0e0] text-gray-500 border border-[#aaa] hover:bg-[#eaeaea]'}
+        `}
+    >
         {icon}
-        <span className="text-[8px] font-bold">{label}</span>
+        <span className="hidden sm:inline">{label}</span>
     </button>
 );
 
