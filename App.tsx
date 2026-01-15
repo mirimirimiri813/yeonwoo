@@ -221,7 +221,7 @@ const App: React.FC = () => {
       {/* Sidebar Image Portal Modal */}
       {sidebarImageExpanded && createPortal(
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fade-in" onClick={() => setSidebarImageExpanded(false)}>
-            <div className="bg-[#e0e0e0] border-2 border-white border-b-gray-600 border-r-gray-600 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.5)] max-w-lg w-full overflow-hidden" onClick={e => e.stopPropagation()}>
+            <div className="bg-[#e0e0e0] border-2 border-white border-b-gray-600 border-r-gray-600 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.5)] max-w-lg w-full overflow-hidden animate-bounce-short" onClick={e => e.stopPropagation()}>
                 <div className="bg-gradient-to-r from-blue-800 to-blue-600 px-2 py-1 flex justify-between items-center h-10">
                     <span className="text-white font-bold text-xs">Profile View - Full Size</span>
                     <button onClick={() => setSidebarImageExpanded(false)} className="w-6 h-6 bg-[#c0c0c0] border border-white border-b-black border-r-black flex items-center justify-center text-xs font-bold active:bg-gray-400">X</button>

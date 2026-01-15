@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { TIME_CAPSULE_LETTER, CAPSULE_ITEMS } from '../constants';
 import { RetroCard } from './RetroCard';
 import { Shovel, Lock, LockOpen, Search, X, ZoomIn } from 'lucide-react';
@@ -99,15 +100,14 @@ export const TimeCapsuleSection: React.FC = () => {
         </div>
       )}
 
-      {/* Item Image Overlay - Use absolute positioning within the relative container to avoid parent clipping */}
-      {selectedItem && (
+      {/* Item Image Overlay - Portal used for fixed positioning and bouncy animation */}
+      {selectedItem && createPortal(
         <div 
-          className="absolute inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-[2px] p-2 sm:p-4 animate-fade-in" 
+          className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fade-in" 
           onClick={() => setSelectedItem(null)}
-          style={{ height: 'calc(100% + 40px)', top: '-20px' }}
         >
           <div 
-            className="bg-[#e0e0e0] border-2 border-white border-b-gray-600 border-r-gray-600 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.3)] max-w-[90%] sm:max-w-sm w-full animate-bounce-short overflow-hidden" 
+            className="bg-[#e0e0e0] border-2 border-white border-b-gray-600 border-r-gray-600 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.5)] max-w-lg w-full animate-bounce-short overflow-hidden" 
             onClick={e => e.stopPropagation()}
           >
             <div className="bg-gradient-to-r from-blue-800 to-blue-600 px-2 py-1 flex justify-between items-center">
@@ -146,7 +146,8 @@ export const TimeCapsuleSection: React.FC = () => {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
