@@ -134,8 +134,8 @@ const App: React.FC = () => {
                       <Heart size={10} fill="currentColor" /> TODAY: 1,024
                     </div>
 
-                    {/* Desktop BGM (Hidden on small mobile to save space) */}
-                    <div className="hidden sm:block mt-2 lg:mt-3 bg-[#f0f0f0] p-1.5 border-2 border-white border-b-gray-400 border-r-gray-400 rounded overflow-hidden">
+                    {/* BGM Player - Visible on all screens now */}
+                    <div className="mt-1.5 sm:mt-2 lg:mt-3 bg-[#f0f0f0] p-1.5 border-2 border-white border-b-gray-400 border-r-gray-400 rounded overflow-hidden">
                         <div className="flex items-center justify-between font-bold text-[9px] lg:text-[10px] mb-1 px-1">
                             <span className="text-blue-700">CYWORLD BGM</span>
                         </div>
